@@ -1,35 +1,19 @@
-import { getTaskById } from '../controllers/taskController.js';
+import mongoose from 'mongoose';
 
 /**
  * Route-Specific Task ID Validation Middleware
- * Validates that :id is a positive integer and that the task exists in memory.
- * - Returns 400 Bad Request if ID format is invalid.
- * - Returns 404 Not Found if no task exists with that ID.
+ * Checks whether the incoming req.params.id is a valid 24-character hexadecimal MongoDB ObjectId.
+ * Returns HTTP 400 with { error: 'Invalid task ID' } if malformed.
  */
 const validateTaskId = (req, res, next) => {
   const { id } = req.params;
-  const parsedId = parseInt(id, 10);
 
-  // Check if ID is a valid positive integer
-  if (isNaN(parsedId) || parsedId <= 0 || !/^\d+$/.test(id.trim())) {
+  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({
-      success: false,
-      error: 'Invalid task ID format. Task ID must be a positive integer.'
+      error: 'Invalid task ID'
     });
   }
 
-  // Check if task exists in memory
-  const task = getTaskById(parsedId);
-  if (!task) {
-    return res.status(404).json({
-      success: false,
-      error: `Task with ID ${parsedId} not found.`
-    });
-  }
-
-  // Attach verified task and taskId to request
-  req.task = task;
-  req.taskId = parsedId;
   next();
 };
 

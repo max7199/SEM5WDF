@@ -2,11 +2,13 @@
 
 - **Student Name:** Max Patel
 - **Roll Number:** 24IT070
-- **Repository Name:** `task5-todoapp-maxpatel`
-- **Repository URL:** [https://github.com/max7199/task5-todoapp-maxpatel.git](https://github.com/max7199/task5-todoapp-maxpatel.git)
+- **Course:** Advanced Web Development Frameworks (ITUE301)
+- **Institution:** Charotar University of Science and Technology (CHARUSAT)
+- **Repository Name:** `SEM5WDF`
+- **Repository URL:** [https://github.com/max7199/SEM5WDF](https://github.com/max7199/SEM5WDF)
 - **Course Outcome:** CO1
 - **Program Outcomes:** PO3, PO5
-- **Technology Stack:** React 18, Vite 5, React Router, GitHub REST API, Vanilla CSS3
+- **Technology Stack:** React 18, Vite 5, React Router, GitHub REST API, Node.js, Express, MongoDB, Mongoose
 
 ---
 
@@ -43,19 +45,23 @@
 
 ### Practical 4: Building a RESTful API with Node.js and Express
 - Modular RESTful API architecture (`server.js`, `routes/`, `controllers/`, `middleware/`).
-- In-memory array data model with full CRUD functionality:
-  - `GET /tasks`: Retrieve all tasks (Status `200 OK`).
-  - `POST /tasks`: Create a new task (Status `201 Created`).
-  - `PUT /tasks/:id`: Update an existing task (Status `200 OK`).
-  - `DELETE /tasks/:id`: Delete an existing task (Status `200 OK`).
-- Complete middleware pipeline:
-  - Global Request Logger (`middleware/logger.js`) logging HTTP method, URL, and timestamp.
-  - Content-Type Verification (`middleware/checkContentType.js`) rejecting POST/PUT without `Content-Type: application/json` (`415 Unsupported Media Type`).
-  - Body Parser (`express.json()`).
-  - Route-specific ID validator (`middleware/validateTaskId.js`) ensuring valid numeric format (`400`) and existence (`404`).
-  - Custom 404 handler for undefined routes.
-  - Global Error Handler (`middleware/errorHandler.js`) catching syntax errors and exceptions safely without leaking stack traces (`500`).
-- Comprehensive automated test runner (`test-api.js` / `npm run test:api`) covering all 12 test cases.
+- In-memory array data model with full CRUD functionality (`GET`, `POST`, `PUT`, `DELETE`).
+- Complete middleware pipeline (Logger, Content-Type verification, `express.json()`, ID validation, 404 handler, Global error handler).
+- Automated test runner (`test-api.js` / `npm run test:api`) covering all 12 test cases.
+
+### Practical 5: MongoDB Integration and Schema Design with Mongoose
+- Production-grade database connectivity to MongoDB using **Mongoose** and **dotenv**.
+- Strictly validated Mongoose Task Schema (`models/Task.js`):
+  - `title`: String, required, trimmed.
+  - `description`: String, default `""`.
+  - `completed`: Boolean, default `false`.
+  - `createdAt`: Date, default `Date.now`.
+  - `priority`: Enum `['low', 'medium', 'high']`, default `'medium'`.
+  - Pre-save hook enforcing whitespace trimming.
+- Database-backed CRUD endpoints (`Task.find()`, `Task.findById()`, `Task.create()`, `Task.findByIdAndUpdate()`, `Task.findByIdAndDelete()`).
+- Structured error handling: Mongoose `ValidationError` and `CastError` formatted into clean JSON without leaking stack traces.
+- Automated database test runner (`test-practical5.js` / `npm run test:p5`) covering all 12 scenarios.
+- Verified data persistence across server restarts in local MongoDB `taskmanager` database.
 
 ---
 
@@ -64,17 +70,19 @@
 ```text
 student-portfolio/
 ├── controllers/
-│   └── taskController.js       # Practical 4: CRUD controller & in-memory tasks
+│   └── taskController.js       # Practical 5: Mongoose CRUD controller
 ├── dist/                       # Production build output
 ├── middleware/
 │   ├── logger.js               # Global request logger (Method, URL, Timestamp)
 │   ├── checkContentType.js     # Validates Content-Type: application/json (415)
-│   ├── validateTaskId.js       # Validates ID format (400) and existence (404)
-│   └── errorHandler.js         # Safe global error handler (400 / 500)
+│   ├── validateTaskId.js       # Validates MongoDB ObjectId (400)
+│   └── errorHandler.js         # Safe error handler formatting Mongoose errors
+├── models/
+│   └── Task.js                 # Practical 5: Mongoose schema and pre-save hook
 ├── node_modules/               # Dependencies
 ├── public/                     # Static assets
 ├── routes/
-│   └── tasks.js                # Practical 4: Task routes
+│   └── tasks.js                # Task routes (GET, POST, PUT, DELETE)
 ├── src/
 │   ├── components/
 │   │   ├── NavBar.jsx          # NavLink navigation + Dark/Light mode toggle
@@ -95,8 +103,11 @@ student-portfolio/
 │   ├── App.css                 # Component styling, layouts, cards, and dark mode
 │   ├── index.css               # Global design tokens and resets
 │   └── main.jsx                # BrowserRouter wrapper entry point
-├── test-api.js                 # Practical 4: Automated test suite
-├── server.js                   # Practical 4: Express server & middleware pipeline
+├── .env                        # Local database URI & port (gitignored)
+├── .env.example                # Template configuration file
+├── test-api.js                 # Practical 4: In-memory automated test suite
+├── test-practical5.js          # Practical 5: MongoDB automated test suite
+├── server.js                   # Practical 5: Database connection & Express server
 ├── index.html                  # HTML host document
 ├── package.json                # Dependencies and scripts
 ├── vite.config.js              # Vite configuration
@@ -105,6 +116,7 @@ student-portfolio/
 ├── PRACTICAL_2_README.md       # Practical 2 Viva & Documentation
 ├── PRACTICAL_3_README.md       # Practical 3 Viva & Documentation
 ├── PRACTICAL_4_README.md       # Practical 4 Viva & Documentation
+├── PRACTICAL_5_README.md       # Practical 5 Viva & Documentation
 └── README.md                   # Project overview
 ```
 
@@ -124,15 +136,18 @@ npm run dev
 npm run build
 ```
 
-### Backend (Practical 4 Express REST API)
+### Backend (Practical 5 MongoDB & Express REST API)
 ```powershell
-# 1. Start Express Server (Port 5000)
+# 1. Ensure local MongoDB service is running
+Get-Service MongoDB
+
+# 2. Start the Express & MongoDB server (Port 5000)
 npm run server
 # or
 node server.js
 
-# 2. Run Automated API Test Suite
-npm run test:api
+# 3. Run Practical 5 Automated Test Suite (12/12 Tests)
+npm run test:p5
 # or
-node test-api.js
+node test-practical5.js
 ```

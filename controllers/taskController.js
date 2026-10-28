@@ -1,175 +1,93 @@
+import Task from '../models/Task.js';
+
 /**
- * In-Memory Task Data Store and Controller for Practical 4
+ * Task Controller for Practical 5
+ * Subject: Advanced Web Development Frameworks (ITUE301)
+ * College: CHARUSAT
  * Student: Max Patel (24IT070)
+ * Uses real MongoDB operations via Mongoose
  */
 
-// In-memory array storing tasks
-let tasks = [
-  {
-    id: 1,
-    title: 'Complete Practical 1',
-    description: 'React Component Architecture and Props',
-    completed: true
-  },
-  {
-    id: 2,
-    title: 'Complete Practical 2',
-    description: 'React State Management and React Router Navigation',
-    completed: true
-  },
-  {
-    id: 3,
-    title: 'Complete Practical 3',
-    description: 'GitHub REST API Integration with useState and useEffect',
-    completed: true
-  },
-  {
-    id: 4,
-    title: 'Complete Practical 4',
-    description: 'Build RESTful API with Node.js, Express, and Middleware',
-    completed: false
-  }
-];
-
-let nextId = 5;
-
-// Helper function to find a task by ID
-export const getTaskById = (id) => {
-  return tasks.find((t) => t.id === id);
-};
-
-// GET /tasks — Retrieve all tasks (Status 200)
-export const getAllTasks = (req, res, next) => {
+// GET /tasks — Fetch all tasks from MongoDB
+export const getAllTasks = async (req, res, next) => {
   try {
-    return res.status(200).json({
-      success: true,
-      count: tasks.length,
-      data: tasks
-    });
+    const tasks = await Task.find().sort({ createdAt: -1 });
+    return res.status(200).json(tasks);
   } catch (error) {
     next(error);
   }
 };
 
-// POST /tasks — Create a new task (Status 201)
-export const createTask = (req, res, next) => {
+// GET /tasks/:id — Fetch a single task by MongoDB ID
+export const getTaskById = async (req, res, next) => {
   try {
-    const { title, description = '', completed = false } = req.body;
+    const task = await Task.findById(req.params.id);
 
-    // Validate required title field
-    if (!title || typeof title !== 'string' || title.trim() === '') {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation Error: "title" is required and must be a non-empty string.'
+    if (!task) {
+      return res.status(404).json({
+        error: 'Task not found'
       });
     }
 
-    // Validate description if provided
-    if (typeof description !== 'string') {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation Error: "description" must be a string.'
-      });
-    }
-
-    // Validate completed if provided
-    if (typeof completed !== 'boolean') {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation Error: "completed" must be a boolean (true or false).'
-      });
-    }
-
-    const newTask = {
-      id: nextId++,
-      title: title.trim(),
-      description: description.trim(),
-      completed: completed
-    };
-
-    tasks.push(newTask);
-
-    return res.status(201).json({
-      success: true,
-      message: 'Task created successfully',
-      data: newTask
-    });
+    return res.status(200).json(task);
   } catch (error) {
     next(error);
   }
 };
 
-// PUT /tasks/:id — Update an existing task (Status 200)
-export const updateTask = (req, res, next) => {
+// POST /tasks — Create and save a new task in MongoDB
+export const createTask = async (req, res, next) => {
   try {
-    // req.task and req.taskId are pre-validated by validateTaskId middleware
-    const task = req.task;
-    const { title, description, completed } = req.body;
+    const { title, description, completed, priority } = req.body;
 
-    // Ensure at least one field is provided for update
-    if (title === undefined && description === undefined && completed === undefined) {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation Error: At least one field (title, description, or completed) must be provided to update.'
-      });
-    }
-
-    // Validate title if provided
-    if (title !== undefined) {
-      if (typeof title !== 'string' || title.trim() === '') {
-        return res.status(400).json({
-          success: false,
-          error: 'Validation Error: "title" must be a non-empty string.'
-        });
-      }
-      task.title = title.trim();
-    }
-
-    // Validate description if provided
-    if (description !== undefined) {
-      if (typeof description !== 'string') {
-        return res.status(400).json({
-          success: false,
-          error: 'Validation Error: "description" must be a string.'
-        });
-      }
-      task.description = description.trim();
-    }
-
-    // Validate completed if provided
-    if (completed !== undefined) {
-      if (typeof completed !== 'boolean') {
-        return res.status(400).json({
-          success: false,
-          error: 'Validation Error: "completed" must be a boolean.'
-        });
-      }
-      task.completed = completed;
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: 'Task updated successfully',
-      data: task
+    const newTask = await Task.create({
+      title,
+      description,
+      completed,
+      priority
     });
+
+    return res.status(201).json(newTask);
   } catch (error) {
     next(error);
   }
 };
 
-// DELETE /tasks/:id — Delete an existing task (Status 200)
-export const deleteTask = (req, res, next) => {
+// PUT /tasks/:id — Update an existing task in MongoDB
+export const updateTask = async (req, res, next) => {
   try {
-    // req.task and req.taskId are pre-validated by validateTaskId middleware
-    const taskId = req.taskId;
-    const deletedTask = req.task;
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, returnDocument: 'after', runValidators: true }
+    );
 
-    tasks = tasks.filter((t) => t.id !== taskId);
+    if (!updatedTask) {
+      return res.status(404).json({
+        error: 'Task not found'
+      });
+    }
+
+    return res.status(200).json(updatedTask);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// DELETE /tasks/:id — Delete a task from MongoDB
+export const deleteTask = async (req, res, next) => {
+  try {
+    const deletedTask = await Task.findByIdAndDelete(req.params.id);
+
+    if (!deletedTask) {
+      return res.status(404).json({
+        error: 'Task not found'
+      });
+    }
 
     return res.status(200).json({
-      success: true,
       message: 'Task deleted successfully',
-      data: deletedTask
+      id: deletedTask._id
     });
   } catch (error) {
     next(error);

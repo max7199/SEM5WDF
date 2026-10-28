@@ -43,12 +43,12 @@ function Footer({
             <p className="footer-text">
               Repository:{' '}
               <a
-                href="https://github.com/max7199/task5-todoapp-maxpatel.git"
+                href="https://github.com/max7199/SEM5WDF"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-email-link"
               >
-                <code>task5-todoapp-maxpatel</code> ↗
+                <code>SEM5WDF</code> ↗
               </a>
             </p>
             <p className="footer-text">Course Outcome: CO1</p>
