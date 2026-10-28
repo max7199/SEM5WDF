@@ -63,6 +63,20 @@
 - Automated database test runner (`test-practical5.js` / `npm run test:p5`) covering all 12 scenarios.
 - Verified data persistence across server restarts in local MongoDB `taskmanager` database.
 
+### Practical 6: Full Stack Integration (React + Node.js + MongoDB)
+- Complete end-to-end integration connecting the React frontend (`http://localhost:5173`) with the Express backend (`http://localhost:5000`) and MongoDB.
+- Cross-Origin Resource Sharing (**CORS**) enabled in `server.js` using the `cors` middleware.
+- Centralized API abstraction layer (`src/api.js`) configuring `VITE_API_BASE_URL` with robust HTTP error handling and status code verification (`getTasks`, `getTask`, `createTask`, `updateTask`, `deleteTask`).
+- Reactive Task Management UI (`src/pages/Tasks.jsx`):
+  - Live task listing with status toggle, priority badges, and formatted dates.
+  - Task creation form (`TaskForm.jsx`) with input validation and supplementary optimistic UI preview.
+  - Task editing modal/form for title, description, and priority updates.
+  - Delete action with custom confirmation modal (`ConfirmModal.jsx`) protecting against accidental deletions.
+  - Non-blocking auto-dismissing toast notifications (`Toast.jsx`) for success, info, and error feedback.
+  - Search filter and multi-criteria sorting (by completion status and priority level).
+  - Graceful triple-state loading and network error handling with retry buttons (`Spinner.jsx`, `ErrorMessage.jsx`).
+  - Verified persistence in MongoDB after full page refreshes.
+
 ---
 
 ## File Structure
@@ -83,9 +97,13 @@ student-portfolio/
 ├── public/                     # Static assets
 ├── routes/
 │   └── tasks.js                # Task routes (GET, POST, PUT, DELETE)
+├── screenshots/
+│   ├── Practical 4/            # REST API screenshots
+│   ├── Practical 5/            # MongoDB screenshots
+│   └── Practical 6/            # 12 Full-stack integration screenshots
 ├── src/
 │   ├── components/
-│   │   ├── NavBar.jsx          # NavLink navigation + Dark/Light mode toggle
+│   │   ├── NavBar.jsx          # NavLink navigation + Tasks link + Dark/Light toggle
 │   │   ├── Header.jsx          # Hero banner component
 │   │   ├── About.jsx           # Personal bio & academic details grid
 │   │   ├── Skills.jsx          # Dynamic skills list
@@ -93,21 +111,27 @@ student-portfolio/
 │   │   ├── Footer.jsx          # Global footer with student credits
 │   │   ├── Spinner.jsx         # CSS loading spinner for API requests
 │   │   ├── ErrorMessage.jsx    # Error alert with Retry button
-│   │   └── RepoList.jsx        # GitHub repositories list with stars & links
+│   │   ├── RepoList.jsx        # GitHub repositories list with stars & links
+│   │   ├── TaskForm.jsx        # Practical 6: Task creation & edit form
+│   │   ├── TaskItem.jsx        # Practical 6: Task card with toggle, badge, & actions
+│   │   ├── ConfirmModal.jsx    # Practical 6: Modal dialog for delete confirmation
+│   │   └── Toast.jsx           # Practical 6: Toast notification alert stack
 │   ├── pages/
 │   │   ├── Home.jsx            # Route: '/' (Header, About, Skills)
 │   │   ├── Projects.jsx        # Route: '/projects' (GitHub API integration)
+│   │   ├── Tasks.jsx           # Route: '/tasks' (Practical 6 Full-stack Tasks page)
 │   │   ├── Contact.jsx         # Route: '/contact' (Controlled form + useState)
 │   │   └── NotFound.jsx        # Route: '*' (Custom 404 page)
+│   ├── api.js                  # Practical 6: Centralized API client functions
 │   ├── App.jsx                 # Router configuration & dark mode state
 │   ├── App.css                 # Component styling, layouts, cards, and dark mode
 │   ├── index.css               # Global design tokens and resets
 │   └── main.jsx                # BrowserRouter wrapper entry point
-├── .env                        # Local database URI & port (gitignored)
+├── .env                        # Local database URI, port, & API base URL (gitignored)
 ├── .env.example                # Template configuration file
 ├── test-api.js                 # Practical 4: In-memory automated test suite
 ├── test-practical5.js          # Practical 5: MongoDB automated test suite
-├── server.js                   # Practical 5: Database connection & Express server
+├── server.js                   # Practical 5/6: Express + MongoDB + CORS server
 ├── index.html                  # HTML host document
 ├── package.json                # Dependencies and scripts
 ├── vite.config.js              # Vite configuration
@@ -117,6 +141,7 @@ student-portfolio/
 ├── PRACTICAL_3_README.md       # Practical 3 Viva & Documentation
 ├── PRACTICAL_4_README.md       # Practical 4 Viva & Documentation
 ├── PRACTICAL_5_README.md       # Practical 5 Viva & Documentation
+├── PRACTICAL_6_README.md       # Practical 6 Full-Stack Integration Viva & Docs
 └── README.md                   # Project overview
 ```
 
@@ -124,30 +149,31 @@ student-portfolio/
 
 ## How to Run Locally
 
-### Frontend (React + Vite)
+### 1. Start MongoDB Service
+Ensure the MongoDB local daemon is running:
 ```powershell
-# 1. Install dependencies
-npm install
-
-# 2. Run the Vite development server (Port 5173)
-npm run dev
-
-# 3. Build for production
-npm run build
+Get-Service MongoDB
+# If stopped:
+Start-Service MongoDB
 ```
 
-### Backend (Practical 5 MongoDB & Express REST API)
+### 2. Backend Server (Express + MongoDB + CORS)
+Runs on `http://localhost:5000`:
 ```powershell
-# 1. Ensure local MongoDB service is running
-Get-Service MongoDB
-
-# 2. Start the Express & MongoDB server (Port 5000)
 npm run server
 # or
 node server.js
+```
 
-# 3. Run Practical 5 Automated Test Suite (12/12 Tests)
-npm run test:p5
-# or
-node test-practical5.js
+### 3. Frontend Application (React + Vite)
+Runs on `http://localhost:5173`:
+```powershell
+npm run dev
+```
+
+Visit [http://localhost:5173/tasks](http://localhost:5173/tasks) to view the live full-stack Task Management interface.
+
+### 4. Build for Production
+```powershell
+npm run build
 ```

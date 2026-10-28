@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import logger from './middleware/logger.js';
 import checkContentType from './middleware/checkContentType.js';
@@ -15,6 +16,9 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/taskmanage
 // ==========================================
 // 1. GLOBAL MIDDLEWARE PIPELINE
 // ==========================================
+
+// Enable Cross-Origin Resource Sharing (CORS) for React frontend
+app.use(cors());
 
 // Request Logging Middleware: logs Method, URL, and Timestamp
 app.use(logger);

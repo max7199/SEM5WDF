@@ -11,6 +11,7 @@ function NavBar({ darkMode, onToggleDarkMode }) {
   const navItems = [
     { to: '/', label: 'Home' },
     { to: '/projects', label: 'Projects' },
+    { to: '/tasks', label: 'Tasks' },
     { to: '/contact', label: 'Contact' }
   ];
 
