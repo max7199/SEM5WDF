@@ -1,27 +1,32 @@
 import Task from '../models/Task.js';
 
 /**
- * Task Controller for Practical 5
+ * Task Controller for Practical 7: Authentication & Middleware Pipeline
  * Subject: Advanced Web Development Frameworks (ITUE301)
  * College: CHARUSAT
  * Student: Max Patel (24IT070)
- * Uses real MongoDB operations via Mongoose
+ *
+ * All task queries enforce user isolation: users can only view,
+ * create, update, and delete tasks associated with their own user ID.
  */
 
-// GET /tasks — Fetch all tasks from MongoDB
+// GET /tasks — Fetch all tasks belonging to the authenticated user
 export const getAllTasks = async (req, res, next) => {
   try {
-    const tasks = await Task.find().sort({ createdAt: -1 });
+    const tasks = await Task.find({ user: req.user.id }).sort({ createdAt: -1 });
     return res.status(200).json(tasks);
   } catch (error) {
     next(error);
   }
 };
 
-// GET /tasks/:id — Fetch a single task by MongoDB ID
+// GET /tasks/:id — Fetch a single task by ID for the authenticated user
 export const getTaskById = async (req, res, next) => {
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findOne({
+      _id: req.params.id,
+      user: req.user.id
+    });
 
     if (!task) {
       return res.status(404).json({
@@ -35,7 +40,7 @@ export const getTaskById = async (req, res, next) => {
   }
 };
 
-// POST /tasks — Create and save a new task in MongoDB
+// POST /tasks — Create and save a new task associated with the logged-in user
 export const createTask = async (req, res, next) => {
   try {
     const { title, description, completed, priority } = req.body;
@@ -44,7 +49,8 @@ export const createTask = async (req, res, next) => {
       title,
       description,
       completed,
-      priority
+      priority,
+      user: req.user.id
     });
 
     return res.status(201).json(newTask);
@@ -53,12 +59,19 @@ export const createTask = async (req, res, next) => {
   }
 };
 
-// PUT /tasks/:id — Update an existing task in MongoDB
+// PUT /tasks/:id — Update an existing task belonging to the authenticated user
 export const updateTask = async (req, res, next) => {
   try {
-    const updatedTask = await Task.findByIdAndUpdate(
-      req.params.id,
-      req.body,
+    // Only allow updating safe task fields, prevent user field hijacking
+    const updates = { ...req.body };
+    delete updates.user;
+
+    const updatedTask = await Task.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.user.id
+      },
+      updates,
       { new: true, returnDocument: 'after', runValidators: true }
     );
 
@@ -74,10 +87,13 @@ export const updateTask = async (req, res, next) => {
   }
 };
 
-// DELETE /tasks/:id — Delete a task from MongoDB
+// DELETE /tasks/:id — Delete a task belonging to the authenticated user
 export const deleteTask = async (req, res, next) => {
   try {
-    const deletedTask = await Task.findByIdAndDelete(req.params.id);
+    const deletedTask = await Task.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.id
+    });
 
     if (!deletedTask) {
       return res.status(404).json({

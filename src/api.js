@@ -1,23 +1,72 @@
 /**
- * Centralized API Utility for Practical 6: Full-Stack Integration
- * Connects the React frontend to the Express + MongoDB backend.
+ * Centralized API Utility for Practical 7: Authentication & Middleware Pipeline
+ * Connects the React frontend to the Express + MongoDB backend with JWT authentication.
  * Student: Max Patel (24IT070) - CHARUSAT - ITUE301
  */
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const TOKEN_KEY = 'auth_jwt_token';
+const USER_KEY = 'auth_user_data';
 
 /**
- * Generic fetch wrapper with robust error handling and status code verification
+ * Token and Session Storage Helpers
+ */
+export function getStoredToken() {
+  return sessionStorage.getItem(TOKEN_KEY);
+}
+
+export function setStoredToken(token) {
+  if (token) {
+    sessionStorage.setItem(TOKEN_KEY, token);
+  } else {
+    sessionStorage.removeItem(TOKEN_KEY);
+  }
+}
+
+export function getStoredUser() {
+  try {
+    const raw = sessionStorage.getItem(USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredUser(user) {
+  if (user) {
+    sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+  } else {
+    sessionStorage.removeItem(USER_KEY);
+  }
+}
+
+export function clearAuthSession() {
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(USER_KEY);
+  window.dispatchEvent(new Event('authChange'));
+}
+
+export function isAuthenticated() {
+  return Boolean(getStoredToken());
+}
+
+/**
+ * Generic fetch wrapper with Bearer token injection, status code verification, and 401 handling
  */
 async function request(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
+  const token = getStoredToken();
+
+  const headers = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers
+  };
+
   const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      ...options.headers
-    },
-    ...options
+    ...options,
+    headers
   };
 
   try {
@@ -32,6 +81,11 @@ async function request(endpoint, options = {}) {
     }
 
     if (!res.ok) {
+      // Handle 401 Unauthorized: clear session if token was invalid/expired
+      if (res.status === 401 && token) {
+        clearAuthSession();
+      }
+
       let errorMessage = 'Request failed';
       let errorDetails = null;
 
@@ -62,21 +116,77 @@ async function request(endpoint, options = {}) {
 }
 
 /**
- * 1. Fetch all tasks from MongoDB (GET /tasks)
+ * ==========================================
+ * AUTHENTICATION API METHODS (Practical 7)
+ * ==========================================
+ */
+
+/**
+ * 1. Register a new user account (POST /register)
+ */
+export async function register(email, password) {
+  return await request('/register', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  });
+}
+
+/**
+ * 2. Log in an existing user (POST /login)
+ */
+export async function login(email, password) {
+  const data = await request('/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  });
+
+  if (data.token) {
+    setStoredToken(data.token);
+    if (data.user) {
+      setStoredUser(data.user);
+    }
+    window.dispatchEvent(new Event('authChange'));
+  }
+
+  return data;
+}
+
+/**
+ * 3. Log out current user
+ */
+export function logout() {
+  clearAuthSession();
+}
+
+/**
+ * 4. Fetch currently authenticated user profile (GET /me)
+ */
+export async function getMe() {
+  return await request('/me');
+}
+
+/**
+ * ==========================================
+ * TASK MANAGEMENT API METHODS (Protected)
+ * ==========================================
+ */
+
+/**
+ * 5. Fetch all tasks from MongoDB (GET /tasks)
  */
 export async function getTasks() {
   return await request('/tasks');
 }
 
 /**
- * 2. Fetch single task by ID (GET /tasks/:id)
+ * 6. Fetch single task by ID (GET /tasks/:id)
  */
 export async function getTask(id) {
   return await request(`/tasks/${id}`);
 }
 
 /**
- * 3. Create a new task (POST /tasks)
+ * 7. Create a new task (POST /tasks)
  */
 export async function createTask(taskData) {
   return await request('/tasks', {
@@ -86,7 +196,7 @@ export async function createTask(taskData) {
 }
 
 /**
- * 4. Update an existing task (PUT /tasks/:id)
+ * 8. Update an existing task (PUT /tasks/:id)
  */
 export async function updateTask(id, taskData) {
   return await request(`/tasks/${id}`, {
@@ -96,7 +206,7 @@ export async function updateTask(id, taskData) {
 }
 
 /**
- * 5. Delete an existing task (DELETE /tasks/:id)
+ * 9. Delete an existing task (DELETE /tasks/:id)
  */
 export async function deleteTask(id) {
   return await request(`/tasks/${id}`, {
@@ -105,6 +215,16 @@ export async function deleteTask(id) {
 }
 
 export default {
+  getStoredToken,
+  setStoredToken,
+  getStoredUser,
+  setStoredUser,
+  clearAuthSession,
+  isAuthenticated,
+  register,
+  login,
+  logout,
+  getMe,
   getTasks,
   getTask,
   createTask,

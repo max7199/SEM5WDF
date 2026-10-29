@@ -77,6 +77,27 @@
   - Graceful triple-state loading and network error handling with retry buttons (`Spinner.jsx`, `ErrorMessage.jsx`).
   - Verified persistence in MongoDB after full page refreshes.
 
+### Practical 7: Authentication and Middleware Pipeline
+- Stateless authentication with **JSON Web Tokens (JWT)** and **Bcrypt** password hashing (10 salt rounds).
+- Mongoose User Model (`models/User.js`) with unique, normalized email and safe serialization excluding password hashes.
+- Authentication endpoints:
+  - `POST /register`: Validates email/password, prevents duplicates, hashes password, returns HTTP 201.
+  - `POST /login`: Validates credentials, compares bcrypt hash, generates 1-hour signed JWT, returns HTTP 200.
+  - `GET /me`: Protected profile endpoint returning safe user details.
+- Robust Express Middleware Pipeline:
+  - `authMiddleware.js`: Validates `Authorization: Bearer <token>`, verifies JWT against `process.env.JWT_SECRET`, attaches `req.user`, and handles expired/malformed tokens without crashing.
+  - `validation.js`: Reusable input validation for email format, password minimum length, and task title whitespace rules.
+- Strict Multi-Tenant Data Isolation:
+  - All task operations are scoped strictly to `req.user.id`.
+  - User A cannot view, update, or delete User B's tasks (returns 404).
+- React Frontend Authentication Integration:
+  - Clean `AuthCard.jsx` with Login and Registration tabs.
+  - Session state managed via `sessionStorage` with safe token storage.
+  - Dynamic user status bar in `Tasks.jsx` displaying active email and `/me` verification button.
+  - Automatic session teardown and 401 handling upon logout or expired token.
+- Automated test suite (`test-practical7.js` / `npm run test:p7`) verifying all 20 security and CRUD scenarios.
+- 12 authentic screenshots captured in `screenshots/P7/`.
+
 ---
 
 ## File Structure
@@ -84,25 +105,32 @@
 ```text
 student-portfolio/
 ├── controllers/
-│   └── taskController.js       # Practical 5: Mongoose CRUD controller
+│   ├── authController.js       # Practical 7: Registration, login, & /me controller
+│   └── taskController.js       # Practical 5/7: User-isolated task CRUD controller
 ├── dist/                       # Production build output
 ├── middleware/
+│   ├── authMiddleware.js       # Practical 7: JWT Bearer token authentication middleware
+│   ├── validation.js           # Practical 7: Server-side input validation middleware
 │   ├── logger.js               # Global request logger (Method, URL, Timestamp)
 │   ├── checkContentType.js     # Validates Content-Type: application/json (415)
 │   ├── validateTaskId.js       # Validates MongoDB ObjectId (400)
-│   └── errorHandler.js         # Safe error handler formatting Mongoose errors
+│   └── errorHandler.js         # Safe error handler formatting Mongoose/JWT errors
 ├── models/
-│   └── Task.js                 # Practical 5: Mongoose schema and pre-save hook
+│   ├── User.js                 # Practical 7: Mongoose User schema & password hashing
+│   └── Task.js                 # Practical 5/7: Mongoose schema with user reference
 ├── node_modules/               # Dependencies
 ├── public/                     # Static assets
 ├── routes/
-│   └── tasks.js                # Task routes (GET, POST, PUT, DELETE)
+│   ├── auth.js                 # Practical 7: Auth routes (/register, /login, /me)
+│   └── tasks.js                # Protected task routes (GET, POST, PUT, DELETE)
 ├── screenshots/
 │   ├── Practical 4/            # REST API screenshots
 │   ├── Practical 5/            # MongoDB screenshots
-│   └── Practical 6/            # 12 Full-stack integration screenshots
+│   ├── Practical 6/            # 12 Full-stack integration screenshots
+│   └── P7/                     # Practical 7: 12 Authentication & middleware screenshots
 ├── src/
 │   ├── components/
+│   │   ├── AuthCard.jsx        # Practical 7: Login & Registration form component
 │   │   ├── NavBar.jsx          # NavLink navigation + Tasks link + Dark/Light toggle
 │   │   ├── Header.jsx          # Hero banner component
 │   │   ├── About.jsx           # Personal bio & academic details grid
@@ -112,28 +140,29 @@ student-portfolio/
 │   │   ├── Spinner.jsx         # CSS loading spinner for API requests
 │   │   ├── ErrorMessage.jsx    # Error alert with Retry button
 │   │   ├── RepoList.jsx        # GitHub repositories list with stars & links
-│   │   ├── TaskForm.jsx        # Practical 6: Task creation & edit form
-│   │   ├── TaskItem.jsx        # Practical 6: Task card with toggle, badge, & actions
-│   │   ├── ConfirmModal.jsx    # Practical 6: Modal dialog for delete confirmation
-│   │   └── Toast.jsx           # Practical 6: Toast notification alert stack
+│   │   ├── TaskForm.jsx        # Task creation & edit form
+│   │   ├── TaskItem.jsx        # Task card with toggle, badge, & actions
+│   │   ├── ConfirmModal.jsx    # Modal dialog for delete confirmation
+│   │   └── Toast.jsx           # Toast notification alert stack
 │   ├── pages/
 │   │   ├── Home.jsx            # Route: '/' (Header, About, Skills)
 │   │   ├── Projects.jsx        # Route: '/projects' (GitHub API integration)
-│   │   ├── Tasks.jsx           # Route: '/tasks' (Practical 6 Full-stack Tasks page)
+│   │   ├── Tasks.jsx           # Route: '/tasks' (Practical 7 Protected Tasks page)
 │   │   ├── Contact.jsx         # Route: '/contact' (Controlled form + useState)
 │   │   └── NotFound.jsx        # Route: '*' (Custom 404 page)
-│   ├── api.js                  # Practical 6: Centralized API client functions
+│   ├── api.js                  # Centralized API client with JWT Bearer injection
 │   ├── App.jsx                 # Router configuration & dark mode state
 │   ├── App.css                 # Component styling, layouts, cards, and dark mode
 │   ├── index.css               # Global design tokens and resets
 │   └── main.jsx                # BrowserRouter wrapper entry point
-├── .env                        # Local database URI, port, & API base URL (gitignored)
-├── .env.example                # Template configuration file
+├── .env                        # Local database URI, JWT secret, port (gitignored)
+├── .env.example                # Template configuration file with placeholder secret
 ├── test-api.js                 # Practical 4: In-memory automated test suite
 ├── test-practical5.js          # Practical 5: MongoDB automated test suite
-├── server.js                   # Practical 5/6: Express + MongoDB + CORS server
+├── test-practical7.js          # Practical 7: Auth & middleware automated test suite
+├── server.js                   # Express + MongoDB + JWT Auth + CORS server
 ├── index.html                  # HTML host document
-├── package.json                # Dependencies and scripts
+├── package.json                # Dependencies and scripts (added test:p7)
 ├── vite.config.js              # Vite configuration
 ├── .gitignore                  # Excludes node_modules, dist, .env, and logs
 ├── PRACTICAL_1_README.md       # Practical 1 Viva & Documentation
@@ -142,6 +171,7 @@ student-portfolio/
 ├── PRACTICAL_4_README.md       # Practical 4 Viva & Documentation
 ├── PRACTICAL_5_README.md       # Practical 5 Viva & Documentation
 ├── PRACTICAL_6_README.md       # Practical 6 Full-Stack Integration Viva & Docs
+├── PRACTICAL_7_README.md       # Practical 7 Authentication & Middleware Viva & Docs
 └── README.md                   # Project overview
 ```
 
@@ -176,4 +206,16 @@ Visit [http://localhost:5173/tasks](http://localhost:5173/tasks) to view the liv
 ### 4. Build for Production
 ```powershell
 npm run build
+```
+
+### 5. Automated Tests
+```powershell
+# Run Practical 4 REST API test suite
+npm run test:api
+
+# Run Practical 5 MongoDB Mongoose test suite
+npm run test:p5
+
+# Run Practical 7 Authentication & Middleware Pipeline test suite
+npm run test:p7
 ```

@@ -2058,3 +2058,368 @@
 .dark-mode .modal-footer {
   background: #0f172a;
 }
+
+/* =============================================================================
+   Practical 7: Authentication & Middleware Pipeline Styles
+   Student: Max Patel (24IT070) - CHARUSAT - ITUE301
+   ============================================================================= */
+
+/* 1. Auth Card Container */
+.auth-card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  padding: 2.25rem 2rem;
+  transition: all 0.3s ease;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-badge {
+  display: inline-block;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid #bfdbfe;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+}
+
+.auth-subtitle {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* 2. Tab Bar */
+.auth-tab-bar {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  gap: 4px;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-tab-btn.active {
+  background: #ffffff;
+  color: #1e293b;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* 3. Alerts */
+.auth-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.auth-alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.auth-alert-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+.auth-alert-icon {
+  font-size: 1.1rem;
+}
+
+/* 4. Auth Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.auth-submit-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+.auth-footer-features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.auth-feature-pill {
+  font-size: 0.75rem;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* 5. User Session Status Bar */
+.auth-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.auth-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.auth-avatar {
+  font-size: 1.6rem;
+}
+
+.auth-user-email {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.auth-user-status {
+  font-size: 0.78rem;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.status-dot-green {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  animation: pulse-dot 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn-logout {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+  background: #fca5a5;
+  color: #991b1b;
+}
+
+/* 6. Profile Modal Details Box */
+.profile-details-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.profile-key {
+  font-weight: 600;
+  color: #475569;
+}
+
+.profile-val {
+  font-family: monospace;
+  color: #0f172a;
+}
+
+.safe-badge {
+  color: #16a34a !important;
+  font-weight: 600;
+}
+
+/* 7. Dark Mode Overrides for Practical 7 */
+.dark-mode .auth-card {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .auth-title {
+  color: #f8fafc;
+}
+
+.dark-mode .auth-subtitle {
+  color: #94a3b8;
+}
+
+.dark-mode .auth-badge {
+  background: #1e3a8a;
+  color: #93c5fd;
+  border-color: #2563eb;
+}
+
+.dark-mode .auth-tab-bar {
+  background: #0f172a;
+}
+
+.dark-mode .auth-tab-btn {
+  color: #94a3b8;
+}
+
+.dark-mode .auth-tab-btn.active {
+  background: #334155;
+  color: #ffffff;
+}
+
+.dark-mode .auth-alert-error {
+  background: #450a0a;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+.dark-mode .auth-alert-success {
+  background: #052e16;
+  border-color: #14532d;
+  color: #86efac;
+}
+
+.dark-mode .auth-footer-features {
+  border-color: #334155;
+}
+
+.dark-mode .auth-feature-pill {
+  background: #0f172a;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.dark-mode .auth-status-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dark-mode .auth-user-email {
+  color: #f8fafc;
+}
+
+.dark-mode .profile-details-box {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.dark-mode .profile-row {
+  border-bottom-color: #334155;
+}
+
+.dark-mode .profile-key {
+  color: #94a3b8;
+}
+
+.dark-mode .profile-val {
+  color: #f8fafc;
+}
+
+.dark-mode .btn-logout {
+  background: #450a0a;
+  color: #fca5a5;
+  border-color: #7f1d1d;
+}
+
+.dark-mode .btn-logout:hover {
+  background: #7f1d1d;
+  color: #fee2e2;
+}
+

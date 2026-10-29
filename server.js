@@ -8,6 +8,7 @@ import logger from './middleware/logger.js';
 import checkContentType from './middleware/checkContentType.js';
 import errorHandler from './middleware/errorHandler.js';
 import taskRoutes from './routes/tasks.js';
+import authRoutes from './routes/auth.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -37,23 +38,42 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Welcome to Practical 5: MongoDB Integration & Schema Design with Mongoose API',
+    message: 'Welcome to Practical 7: Authentication & Middleware Pipeline API',
     student: 'Max Patel (24IT070)',
     course: 'Advanced Web Development Frameworks (ITUE301)',
     college: 'CHARUSAT',
     database: 'MongoDB (taskmanager)',
+    features: [
+      'JWT Authentication & Verification',
+      'Bcrypt Password Hashing',
+      'Protected Task Routes with User Isolation',
+      'Server-Side Input Validation Pipeline'
+    ],
     endpoints: {
-      getAllTasks: 'GET /tasks',
-      getSingleTask: 'GET /tasks/:id',
-      createTask: 'POST /tasks',
-      updateTask: 'PUT /tasks/:id',
-      deleteTask: 'DELETE /tasks/:id'
+      auth: {
+        register: 'POST /register (or /auth/register)',
+        login: 'POST /login (or /auth/login)',
+        me: 'GET /me (or /auth/me) [Protected]'
+      },
+      tasks: {
+        getAllTasks: 'GET /tasks [Protected]',
+        getSingleTask: 'GET /tasks/:id [Protected]',
+        createTask: 'POST /tasks [Protected]',
+        updateTask: 'PUT /tasks/:id [Protected]',
+        deleteTask: 'DELETE /tasks/:id [Protected]'
+      }
     }
   });
 });
 
+// Mount Authentication Routes
+app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/', authRoutes);
+
 // Mount Task Management Routes
 app.use('/tasks', taskRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Simulation route for verifying 500 error handler
 app.get('/simulate-error', (req, res, next) => {
