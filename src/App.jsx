@@ -1,20 +1,24 @@
 // =============================================================================
-// Practical 2: React State Management and Multi-Page Navigation
+// Practical 8: Performance Optimization and Lazy Loading in React
 // File: src/App.jsx
 // Description: Main root application component configuring React Router routes
-//              (/, /projects, /contact, *) and managing dark/light mode state.
+//              with React.lazy() and Suspense for code-splitting and lazy-loading
+//              route components (Projects, Contact), managing dark/light mode state.
 // =============================================================================
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
+import LoadingFallback from './components/LoadingFallback';
 import Home from './pages/Home';
-import Projects from './pages/Projects';
-import Contact from './pages/Contact';
 import Tasks from './pages/Tasks';
 import NotFound from './pages/NotFound';
 import './App.css';
+
+// Practical 8: Route-based dynamic code-splitting using React.lazy()
+const Projects = lazy(() => import('./pages/Projects'));
+const Contact = lazy(() => import('./pages/Contact'));
 
 function App() {
   // Supplementary Requirement: Dark / Light Mode state
@@ -35,13 +39,27 @@ function App() {
         onToggleDarkMode={() => setDarkMode(!darkMode)}
       />
 
-      {/* 2. Client-Side Multi-Page Routes */}
+      {/* 2. Client-Side Multi-Page Routes with Route-Level Suspense */}
       <div className="content-area">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<Projects />} />
+          <Route
+            path="/projects"
+            element={
+              <Suspense fallback={<LoadingFallback message="Loading Projects page..." />}>
+                <Projects />
+              </Suspense>
+            }
+          />
           <Route path="/tasks" element={<Tasks />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route
+            path="/contact"
+            element={
+              <Suspense fallback={<LoadingFallback message="Loading Contact page..." />}>
+                <Contact />
+              </Suspense>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

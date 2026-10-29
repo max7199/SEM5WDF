@@ -98,6 +98,18 @@
 - Automated test suite (`test-practical7.js` / `npm run test:p7`) verifying all 20 security and CRUD scenarios.
 - 12 authentic screenshots captured in `screenshots/P7/`.
 
+### Practical 8: Performance Optimization and Lazy Loading in React
+- Route-based code splitting using **`React.lazy()`** and dynamic ES modules for `/projects` (`Projects.jsx`) and `/contact` (`Contact.jsx`).
+- Route-level **`<Suspense>`** boundaries with accessible loading indicators (`LoadingFallback.jsx`) implementing `role="status"` and `aria-live="polite"`.
+- Lazy-loaded heavy feature component: **`TaskAnalytics.jsx`** dynamically fetched inside the Task Management dashboard (`Tasks.jsx`) to compute on-demand KPI metrics, completion progress bars, priority distribution, and velocity score without blocking initial dashboard load.
+- Re-render optimization with **`React.memo`** preventing avoidable re-renders during keystrokes in task search filter input (verified 0.0 ms commit time in React DevTools Profiler).
+- Baseline vs. Post-Optimization verification:
+  - Monolithic 219.19 kB bundle split into reduced 213.90 kB main entry bundle + 3 dynamic on-demand chunks (`Projects`: 3.44 kB, `Contact`: 3.99 kB, `TaskAnalytics`: 3.23 kB).
+  - Verified on-demand HTTP chunk downloads and visible fallback under Slow 3G network simulation.
+  - Zero regression across all previous Practicals 1–7.
+- Detailed documentation: [docs/PRACTICAL_8.md](docs/PRACTICAL_8.md) and [PRACTICAL_8_README.md](PRACTICAL_8_README.md).
+- 12 authentic screenshots captured in `screenshots/P8/`.
+
 ---
 
 ## File Structure
@@ -127,10 +139,13 @@ student-portfolio/
 │   ├── Practical 4/            # REST API screenshots
 │   ├── Practical 5/            # MongoDB screenshots
 │   ├── Practical 6/            # 12 Full-stack integration screenshots
-│   └── P7/                     # Practical 7: 12 Authentication & middleware screenshots
+│   ├── P7/                     # Practical 7: 12 Authentication & middleware screenshots
+│   └── P8/                     # Practical 8: 12 Performance & code splitting screenshots
 ├── src/
 │   ├── components/
 │   │   ├── AuthCard.jsx        # Practical 7: Login & Registration form component
+│   │   ├── LoadingFallback.jsx # Practical 8: Accessible Suspense loading fallback
+│   │   ├── TaskAnalytics.jsx   # Practical 8: Lazy-loaded heavy analytics component (memoized)
 │   │   ├── NavBar.jsx          # NavLink navigation + Tasks link + Dark/Light toggle
 │   │   ├── Header.jsx          # Hero banner component
 │   │   ├── About.jsx           # Personal bio & academic details grid
@@ -165,6 +180,8 @@ student-portfolio/
 ├── package.json                # Dependencies and scripts (added test:p7)
 ├── vite.config.js              # Vite configuration
 ├── .gitignore                  # Excludes node_modules, dist, .env, and logs
+├── docs/
+│   └── PRACTICAL_8.md          # Practical 8: Performance & Lazy Loading in-depth documentation
 ├── PRACTICAL_1_README.md       # Practical 1 Viva & Documentation
 ├── PRACTICAL_2_README.md       # Practical 2 Viva & Documentation
 ├── PRACTICAL_3_README.md       # Practical 3 Viva & Documentation
@@ -172,6 +189,7 @@ student-portfolio/
 ├── PRACTICAL_5_README.md       # Practical 5 Viva & Documentation
 ├── PRACTICAL_6_README.md       # Practical 6 Full-Stack Integration Viva & Docs
 ├── PRACTICAL_7_README.md       # Practical 7 Authentication & Middleware Viva & Docs
+├── PRACTICAL_8_README.md       # Practical 8 Performance Optimization Viva & Docs
 └── README.md                   # Project overview
 ```
 

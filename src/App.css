@@ -2423,3 +2423,271 @@
   color: #fee2e2;
 }
 
+
+/* =============================================================================
+   15. Practical 8 Styles: Performance Optimization, Route Suspense & Task Analytics
+   ============================================================================= */
+
+/* A. Route Suspense Loading Fallback */
+.route-fallback-container {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 3rem 1.5rem;
+  background: transparent;
+}
+
+.fallback-mini {
+  padding: 2rem 1rem;
+  min-height: 140px;
+}
+
+.spinner-mini {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+/* B. Task Analytics Component */
+.task-analytics-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.analytics-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.analytics-icon {
+  font-size: 1.85rem;
+  line-height: 1;
+}
+
+.analytics-heading {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.analytics-caption {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 0.2rem;
+}
+
+.analytics-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-high {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.status-medium {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.status-low {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.status-neutral {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.analytics-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.kpi-item {
+  background: #f8fafc;
+  border: 1px solid #edf2f7;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kpi-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpi-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.text-blue { color: #2563eb; }
+.text-green { color: #16a34a; }
+.text-amber { color: #d97706; }
+.text-red { color: #dc2626; }
+
+.kpi-sub {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.analytics-bars-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #f8fafc;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.bar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bar-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.progress-green {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.priority-distribution-block {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.distribution-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.distribution-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dist-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+}
+
+.chip-high { background: #fee2e2; color: #991b1b; }
+.chip-medium { background: #fef3c7; color: #92400e; }
+.chip-low { background: #dcfce7; color: #166534; }
+
+/* Dark Mode Overrides for Practical 8 */
+.dark-mode .task-analytics-card {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.dark-mode .analytics-heading {
+  color: #f1f5f9;
+}
+
+.dark-mode .analytics-caption {
+  color: #94a3b8;
+}
+
+.dark-mode .kpi-item {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.dark-mode .kpi-label {
+  color: #94a3b8;
+}
+
+.dark-mode .kpi-sub {
+  color: #64748b;
+}
+
+.dark-mode .analytics-bars-section {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.dark-mode .bar-label-row {
+  color: #cbd5e1;
+}
+
+.dark-mode .progress-track {
+  background: #334155;
+}
+
+.dark-mode .distribution-title {
+  color: #94a3b8;
+}
+
+.dark-mode .status-neutral {
+  background: #334155;
+  color: #e2e8f0;
+  border-color: #475569;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import {
   getTasks,
   createTask,
@@ -16,6 +16,10 @@ import Toast from '../components/Toast';
 import Spinner from '../components/Spinner';
 import ErrorMessage from '../components/ErrorMessage';
 import AuthCard from '../components/AuthCard';
+import LoadingFallback from '../components/LoadingFallback';
+
+// Practical 8: Lazy-load additional heavy component (TaskAnalytics)
+const TaskAnalytics = lazy(() => import('../components/TaskAnalytics'));
 
 /**
  * Task Management Page for Practical 7: Authentication & Middleware Pipeline
@@ -407,8 +411,20 @@ function Tasks() {
             />
           </div>
 
-          {/* Right Column: Search, Filter, and Task List */}
+          {/* Right Column: Search, Filter, Analytics, and Task List */}
           <div className="tasks-list-column">
+            {/* Practical 8: Lazy-Loaded Heavy Component with Suspense Fallback */}
+            <Suspense
+              fallback={
+                <LoadingFallback
+                  message="Loading Task Analytics & Productivity Insights..."
+                  mini
+                />
+              }
+            >
+              <TaskAnalytics tasks={tasks} />
+            </Suspense>
+
             {/* Controls Bar */}
             <div className="tasks-controls-card">
               <div className="search-input-wrap">
