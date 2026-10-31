@@ -1,0 +1,63 @@
+# =============================================================================
+# Practical 12: Continuous Integration (CI) Pipeline
+# File: .github/workflows/ci.yml
+# Description: Automated CI workflow on GitHub Actions triggering on push and PR to main.
+#              Installs dependencies, runs Jest & Supertest integration tests,
+#              and compiles the React Vite frontend bundle.
+# Student: Max Patel (24IT070) - CHARUSAT - ITUE301
+# =============================================================================
+
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: Automated Integration Tests with Jest & Supertest
+  # ---------------------------------------------------------------------------
+  test:
+    name: Run Automated API Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20 LTS Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Execute Jest & Supertest Automated Tests
+        run: npm test
+
+  # ---------------------------------------------------------------------------
+  # Job 2: Frontend Production Build Verification
+  # ---------------------------------------------------------------------------
+  build:
+    name: Verify Production Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20 LTS Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Compile React Vite Bundle
+        run: npm run build

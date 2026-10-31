@@ -9,6 +9,7 @@
 - **Course Outcome:** CO1
 - **Program Outcomes:** PO3, PO5
 - **Technology Stack:** React 18, Vite 5, React Router, GitHub REST API, Node.js, Express, MongoDB, Mongoose
+- **CI/CD Pipeline Status:** [![CI Pipeline](https://github.com/max7199/SEM5WDF/actions/workflows/ci.yml/badge.svg)](https://github.com/max7199/SEM5WDF/actions/workflows/ci.yml)
 
 ---
 
@@ -149,12 +150,29 @@
 - Detailed documentation: [docs/PRACTICAL_11.md](docs/PRACTICAL_11.md) and [PRACTICAL_11_README.md](PRACTICAL_11_README.md).
 - 14 authentic screenshots captured in `screenshots/P11/`.
 
+### Practical 12: CI/CD Pipeline with GitHub Actions
+- Continuous Integration (CI) pipeline implemented using **GitHub Actions** (`.github/workflows/ci.yml`) triggering on pushes and pull requests to `main`.
+- Express architecture refactoring: separated application definition (`app.js`) from server network binding (`server.js`) to enable fast in-memory integration testing with **Supertest**.
+- Automated testing with **Jest** and **Supertest** covering API health check probes, metadata inspection, route authorization barriers (HTTP 401), validation pipelines (HTTP 400), and 404 handlers.
+- Multi-job GitHub Actions workflow on `ubuntu-latest`:
+  - **API Tests Job:** Installs dependencies via `npm install` and runs `npm test`.
+  - **Build Verification Job:** Installs dependencies and verifies React Vite production compilation via `npm run build`.
+- Two-stage pipeline demonstration:
+  - **Deliberate Failure (`practical12: demonstrate failing test`):** Verified GitHub Actions catches assertion failures with a red failure status (✖).
+  - **Recovery & Fix (`practical12: fix failing test`):** Restored assertions to verify green passing status (✔).
+- Live CI status badge embedded in `README.md`.
+- Detailed documentation: [docs/PRACTICAL_12.md](docs/PRACTICAL_12.md) and [PRACTICAL_12_README.md](PRACTICAL_12_README.md).
+- 12 authentic screenshots captured in `screenshots/P12/`.
+
 ---
 
 ## File Structure
 
 ```text
 student-portfolio/
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # Practical 12: GitHub Actions CI pipeline configuration
 ├── backend/                    # Practical 11: Backend container specifications
 │   ├── Dockerfile              # Node.js 20 Alpine production backend image
 │   └── .dockerignore           # Excludes local node_modules and .env
@@ -193,7 +211,8 @@ student-portfolio/
 │   ├── P8/                     # Practical 8: 12 Performance & code splitting screenshots
 │   ├── P9/                     # Practical 9: 10 In-memory caching & benchmark screenshots
 │   ├── P10/                    # Practical 10: 11 Asynchronous event processing screenshots
-│   └── P11/                    # Practical 11: 14 Docker containerization & orchestration screenshots
+│   ├── P11/                    # Practical 11: 14 Docker containerization & orchestration screenshots
+│   └── P12/                    # Practical 12: 12 CI/CD GitHub Actions pipeline screenshots
 ├── src/
 │   ├── components/
 │   │   ├── AuthCard.jsx        # Practical 7: Login & Registration form component
@@ -223,6 +242,8 @@ student-portfolio/
 │   ├── App.css                 # Component styling, layouts, cards, and dark mode
 │   ├── index.css               # Global design tokens and resets
 │   └── main.jsx                # BrowserRouter wrapper entry point
+├── tests/
+│   └── api.test.js             # Practical 12: Jest & Supertest automated API tests
 ├── utils/
 │   └── cache.js                # Practical 9: Shared node-cache module with TTL & invalidation
 ├── .dockerignore               # Practical 11: Root Docker ignore patterns
@@ -233,22 +254,18 @@ student-portfolio/
 ├── Dockerfile.frontend         # Practical 11: Multi-stage React Vite + Nginx containerfile
 ├── docker-compose.yml          # Practical 11: Multi-container orchestration specification
 ├── nginx.conf                  # Practical 11: Nginx SPA routing & API reverse proxy configuration
-├── test-api.js                 # Practical 4: In-memory automated test suite
-├── test-practical5.js          # Practical 5: MongoDB automated test suite
-├── test-practical7.js          # Practical 7: Auth & middleware automated test suite
-├── test-practical9.js          # Practical 9: In-memory caching & benchmark test suite
-├── test-practical10.js         # Practical 10: Asynchronous event-driven test suite
-├── test-practical11.js         # Practical 11: Docker specification & API test suite
+├── app.js                      # Practical 12: Express app configuration separated for testing
 ├── server.js                   # Express + MongoDB + JWT Auth + Caching + Event listeners + Health
 ├── index.html                  # HTML host document
-├── package.json                # Dependencies and scripts (added test:p11)
+├── package.json                # Dependencies and scripts (added test & test:p12)
 ├── vite.config.js              # Vite configuration
 ├── .gitignore                  # Excludes node_modules, dist, .env, and logs
 ├── docs/
 │   ├── PRACTICAL_8.md          # Practical 8: Performance & Lazy Loading in-depth documentation
 │   ├── PRACTICAL_9.md          # Practical 9: In-Memory Caching in-depth documentation
 │   ├── PRACTICAL_10.md         # Practical 10: Asynchronous Event-Driven Architecture documentation
-│   └── PRACTICAL_11.md         # Practical 11: Containerization with Docker & Docker Compose docs
+│   ├── PRACTICAL_11.md         # Practical 11: Containerization with Docker & Docker Compose docs
+│   └── PRACTICAL_12.md         # Practical 12: CI/CD Pipeline with GitHub Actions documentation
 ├── PRACTICAL_1_README.md       # Practical 1 Viva & Documentation
 ├── PRACTICAL_2_README.md       # Practical 2 Viva & Documentation
 ├── PRACTICAL_3_README.md       # Practical 3 Viva & Documentation
@@ -260,6 +277,7 @@ student-portfolio/
 ├── PRACTICAL_9_README.md       # Practical 9 In-Memory Caching Viva & Docs
 ├── PRACTICAL_10_README.md      # Practical 10 Asynchronous Event-Driven Viva & Docs
 ├── PRACTICAL_11_README.md      # Practical 11 Docker Containerization Viva & Docs
+├── PRACTICAL_12_README.md      # Practical 12 CI/CD Pipeline Viva & Docs
 └── README.md                   # Project overview
 ```
 
@@ -339,4 +357,9 @@ npm run test:p10
 
 # Run Practical 11 Docker Specification & Containerization test suite
 npm run test:p11
+
+# Run Practical 12 Jest & Supertest Integration test suite (CI Pipeline)
+npm test
+# or
+npm run test:p12
 ```
