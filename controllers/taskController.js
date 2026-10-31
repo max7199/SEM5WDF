@@ -13,6 +13,7 @@ import cache, {
   getTaskItemKey,
   invalidateUserTaskCache
 } from '../utils/cache.js';
+import taskEvents from '../events/taskEvents.js';
 
 /**
  * Task Controller for Practical 9
@@ -82,7 +83,7 @@ export const getTaskById = async (req, res, next) => {
   }
 };
 
-// POST /tasks — Create and save a new task; invalidate user task list cache
+// POST /tasks — Create and save a new task; invalidate cache & emit task-created event
 export const createTask = async (req, res, next) => {
   try {
     const { title, description, completed, priority } = req.body;
@@ -95,9 +96,24 @@ export const createTask = async (req, res, next) => {
       user: req.user.id
     });
 
-    // Invalidate user's task list cache after successful write
+    // Invalidate user's task list cache after successful write (Practical 9)
     invalidateUserTaskCache(req.user.id);
 
+    // Practical 10: Record API response timestamp
+    const apiTimestamp = new Date().toISOString();
+    console.log(`[API RESPONSE] Task created successfully at: ${apiTimestamp}`);
+
+    // Practical 10: Asynchronous event emission (background notification)
+    // The event listener is executed asynchronously via setImmediate()
+    taskEvents.emit('task-created', {
+      taskId: newTask._id.toString(),
+      title: newTask.title,
+      userId: req.user.id,
+      userEmail: req.user.email,
+      apiTimestamp
+    });
+
+    // Return HTTP 201 immediately without waiting for notification processing
     return res.status(201).json(newTask);
   } catch (error) {
     next(error);

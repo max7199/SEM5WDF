@@ -123,6 +123,19 @@
 - Detailed documentation: [docs/PRACTICAL_9.md](docs/PRACTICAL_9.md) and [PRACTICAL_9_README.md](PRACTICAL_9_README.md).
 - 10 authentic screenshots captured in `screenshots/P9/`.
 
+### Practical 10: Asynchronous Processing with Event-Driven Architecture
+- Asynchronous processing with Node.js's native **`EventEmitter`** (`node:events`) without external dependencies.
+- Centralized event emitter instance in `events/taskEvents.js` and decoupled background listener in `events/taskListeners.js` subscribing to `'task-created'`.
+- Background notification listener execution deferred to the event loop's check phase via **`setImmediate()`**, ensuring the HTTP response is never blocked.
+- Immediate `HTTP 201 Created` (~3.88 ms) returned to client while notification details are processed in the background.
+- Dual timestamp logging:
+  - API response timestamp: `[API RESPONSE] Task created successfully at: ...`
+  - Background handler timestamp: `[BACKGROUND NOTIFICATION] Processing task-created event at: ...`
+- Strict security & validation: events emitted strictly after database document persistence (`await Task.create()`); failed validations (HTTP 400) and unauthorized requests (HTTP 401) emit zero events.
+- Automated test suite (`test-practical10.js` / `npm run test:p10`) verifying all 9 asynchronous, dispatching, and security scenarios (100% green).
+- Detailed documentation: [docs/PRACTICAL_10.md](docs/PRACTICAL_10.md) and [PRACTICAL_10_README.md](PRACTICAL_10_README.md).
+- 11 authentic screenshots captured in `screenshots/P10/`.
+
 ---
 
 ## File Structure
@@ -131,8 +144,11 @@
 student-portfolio/
 ├── controllers/
 │   ├── authController.js       # Practical 7: Registration, login, & /me controller
-│   └── taskController.js       # Practical 5/7: User-isolated task CRUD controller
+│   └── taskController.js       # Practical 5/7/10: Task CRUD with cache & event emission
 ├── dist/                       # Production build output
+├── events/                     # Practical 10: Event-Driven Architecture
+│   ├── taskEvents.js           # Shared Node.js EventEmitter instance
+│   └── taskListeners.js        # Background notification listener with setImmediate()
 ├── middleware/
 │   ├── authMiddleware.js       # Practical 7: JWT Bearer token authentication middleware
 │   ├── validation.js           # Practical 7: Server-side input validation middleware
@@ -147,7 +163,7 @@ student-portfolio/
 ├── public/                     # Static assets
 ├── routes/
 │   ├── auth.js                 # Practical 7: Auth routes (/register, /login, /me)
-│   ├── debug.js                # Practical 9: Cache monitoring routes (/debug/cache)
+│   ├── debug.js                # Practical 9/10: Cache & notification debug routes
 │   └── tasks.js                # Protected task routes (GET, POST, PUT, DELETE)
 ├── screenshots/
 │   ├── Practical 4/            # REST API screenshots
@@ -155,7 +171,8 @@ student-portfolio/
 │   ├── Practical 6/            # 12 Full-stack integration screenshots
 │   ├── P7/                     # Practical 7: 12 Authentication & middleware screenshots
 │   ├── P8/                     # Practical 8: 12 Performance & code splitting screenshots
-│   └── P9/                     # Practical 9: 10 In-memory caching & benchmark screenshots
+│   ├── P9/                     # Practical 9: 10 In-memory caching & benchmark screenshots
+│   └── P10/                    # Practical 10: 11 Asynchronous event processing screenshots
 ├── src/
 │   ├── components/
 │   │   ├── AuthCard.jsx        # Practical 7: Login & Registration form component
@@ -193,14 +210,16 @@ student-portfolio/
 ├── test-practical5.js          # Practical 5: MongoDB automated test suite
 ├── test-practical7.js          # Practical 7: Auth & middleware automated test suite
 ├── test-practical9.js          # Practical 9: In-memory caching & benchmark test suite
-├── server.js                   # Express + MongoDB + JWT Auth + Caching server
+├── test-practical10.js         # Practical 10: Asynchronous event-driven test suite
+├── server.js                   # Express + MongoDB + JWT Auth + Caching + Event listeners
 ├── index.html                  # HTML host document
-├── package.json                # Dependencies and scripts (added test:p9)
+├── package.json                # Dependencies and scripts (added test:p10)
 ├── vite.config.js              # Vite configuration
 ├── .gitignore                  # Excludes node_modules, dist, .env, and logs
 ├── docs/
 │   ├── PRACTICAL_8.md          # Practical 8: Performance & Lazy Loading in-depth documentation
-│   └── PRACTICAL_9.md          # Practical 9: In-Memory Caching in-depth documentation
+│   ├── PRACTICAL_9.md          # Practical 9: In-Memory Caching in-depth documentation
+│   └── PRACTICAL_10.md         # Practical 10: Asynchronous Event-Driven Architecture documentation
 ├── PRACTICAL_1_README.md       # Practical 1 Viva & Documentation
 ├── PRACTICAL_2_README.md       # Practical 2 Viva & Documentation
 ├── PRACTICAL_3_README.md       # Practical 3 Viva & Documentation
@@ -210,6 +229,7 @@ student-portfolio/
 ├── PRACTICAL_7_README.md       # Practical 7 Authentication & Middleware Viva & Docs
 ├── PRACTICAL_8_README.md       # Practical 8 Performance Optimization Viva & Docs
 ├── PRACTICAL_9_README.md       # Practical 9 In-Memory Caching Viva & Docs
+├── PRACTICAL_10_README.md      # Practical 10 Asynchronous Event-Driven Viva & Docs
 └── README.md                   # Project overview
 ```
 
@@ -259,4 +279,7 @@ npm run test:p7
 
 # Run Practical 9 In-Memory Caching & Benchmark test suite
 npm run test:p9
+
+# Run Practical 10 Asynchronous Event-Driven Architecture test suite
+npm run test:p10
 ```

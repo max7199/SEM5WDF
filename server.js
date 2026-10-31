@@ -10,6 +10,7 @@ import errorHandler from './middleware/errorHandler.js';
 import taskRoutes from './routes/tasks.js';
 import authRoutes from './routes/auth.js';
 import debugRoutes from './routes/debug.js';
+import { initTaskListeners } from './events/taskListeners.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,7 +40,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Welcome to Practical 9: In-Memory Caching and Query Optimization API',
+    message: 'Welcome to Practical 10: Asynchronous Processing with Event-Driven Architecture API',
     student: 'Max Patel (24IT070)',
     course: 'Advanced Web Development Frameworks (ITUE301)',
     college: 'CHARUSAT',
@@ -51,7 +52,10 @@ app.get('/', (req, res) => {
       'Server-Side Input Validation Pipeline',
       'In-Memory Caching (node-cache) with 60s TTL',
       'Automatic Cache Invalidation on Writes (POST, PUT, DELETE)',
-      'Cache Hit/Miss Metrics Monitoring (/debug/cache)'
+      'Cache Hit/Miss Metrics Monitoring (/debug/cache)',
+      'Asynchronous Event-Driven Architecture (Node.js EventEmitter)',
+      'Background Task-Created Notification Processing (task-created)',
+      'Decoupled setImmediate() Event Loop Execution'
     ],
     endpoints: {
       auth: {
@@ -62,13 +66,15 @@ app.get('/', (req, res) => {
       tasks: {
         getAllTasks: 'GET /tasks [Protected, Cached]',
         getSingleTask: 'GET /tasks/:id [Protected, Cached]',
-        createTask: 'POST /tasks [Protected, Invalidates Cache]',
+        createTask: 'POST /tasks [Protected, Emits task-created]',
         updateTask: 'PUT /tasks/:id [Protected, Invalidates Cache]',
         deleteTask: 'DELETE /tasks/:id [Protected, Invalidates Cache]'
       },
       debug: {
         cacheMetrics: 'GET /debug/cache',
-        cacheReset: 'POST /debug/cache/reset'
+        cacheReset: 'POST /debug/cache/reset',
+        notifications: 'GET /debug/notifications',
+        notificationsReset: 'POST /debug/notifications/reset'
       }
     }
   });
@@ -83,7 +89,7 @@ app.use('/', authRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/api/tasks', taskRoutes);
 
-// Mount Cache Debug Routes (Practical 9)
+// Mount Cache & Notification Debug Routes (Practical 9 & 10)
 app.use('/debug', debugRoutes);
 app.use('/api/debug', debugRoutes);
 
@@ -120,14 +126,19 @@ const connectDB = async () => {
     console.log(` Database: ${conn.connection.name}`);
     console.log(`=======================================================`);
 
+    // Initialize Practical 10 background event listeners
+    initTaskListeners();
+
     server = app.listen(PORT, () => {
-      console.log(` Practical 5 Server running at: http://localhost:${PORT}`);
+      console.log(` Practical 10 Server running at: http://localhost:${PORT}`);
       console.log(` Endpoints:`);
       console.log(`   - GET    http://localhost:${PORT}/tasks`);
       console.log(`   - GET    http://localhost:${PORT}/tasks/:id`);
-      console.log(`   - POST   http://localhost:${PORT}/tasks`);
+      console.log(`   - POST   http://localhost:${PORT}/tasks [Emits task-created]`);
       console.log(`   - PUT    http://localhost:${PORT}/tasks/:id`);
       console.log(`   - DELETE http://localhost:${PORT}/tasks/:id`);
+      console.log(`   - GET    http://localhost:${PORT}/debug/cache`);
+      console.log(`   - GET    http://localhost:${PORT}/debug/notifications`);
       console.log(`=======================================================`);
     });
 

@@ -12,7 +12,8 @@
     "test:api": "node test-api.js",
     "test:p5": "node test-practical5.js",
     "test:p7": "node test-practical7.js",
-    "test:p9": "node test-practical9.js"
+    "test:p9": "node test-practical9.js",
+    "test:p10": "node test-practical10.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
