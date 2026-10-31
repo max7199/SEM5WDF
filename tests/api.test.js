@@ -11,10 +11,11 @@ import request from 'supertest';
 import app from '../app.js';
 
 describe('Task Management API Test Suite (Practical 12 CI/CD)', () => {
-  // Test 1: Health check endpoint
+  // Test 1: Health check endpoint (DELIBERATE FAILURE FOR DEMONSTRATION)
   test('GET /api/health returns HTTP 200 and healthy status', async () => {
     const res = await request(app).get('/api/health');
-    expect(res.statusCode).toBe(200);
+    // Deliberately broken assertion: expects HTTP 500 instead of HTTP 200
+    expect(res.statusCode).toBe(500);
     expect(res.body.status).toBe('healthy');
     expect(res.body.services).toBeDefined();
     expect(res.body.services.server).toBe('online');
