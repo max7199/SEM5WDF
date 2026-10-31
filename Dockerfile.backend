@@ -1,0 +1,41 @@
+# =============================================================================
+# Practical 11: Containerization with Docker and Docker Compose
+# File: Dockerfile.backend
+# Description: Production-ready container image for Node.js Express Backend
+# Student: Max Patel (24IT070) - CHARUSAT - ITUE301
+# =============================================================================
+
+# Step 1: Base image using official Node.js 20 LTS Alpine for minimal footprint
+FROM node:20-alpine
+
+# Step 2: Set working directory inside container
+WORKDIR /app
+
+# Step 3: Set production environment
+ENV NODE_ENV=production
+ENV PORT=5000
+
+# Step 4: Copy package manifests first for optimal Docker layer caching
+COPY package*.json ./
+
+# Step 5: Install production dependencies only
+RUN npm ci --omit=dev
+
+# Step 6: Copy application backend source code and modules
+COPY server.js ./
+COPY controllers/ ./controllers/
+COPY routes/ ./routes/
+COPY middleware/ ./middleware/
+COPY models/ ./models/
+COPY utils/ ./utils/
+COPY events/ ./events/
+
+# Step 7: Expose backend application port
+EXPOSE 5000
+
+# Step 8: Health check instruction using built-in Node.js fetch
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD node -e "fetch('http://localhost:5000/api/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
+
+# Step 9: Launch Express backend server
+CMD ["node", "server.js"]

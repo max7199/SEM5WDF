@@ -1,0 +1,102 @@
+# =============================================================================
+# Practical 11: Containerization with Docker and Docker Compose
+# File: docker-compose.yml
+# Description: Multi-container orchestration for React Frontend, Node.js Backend,
+#              and MongoDB Database with persistent named volume and health checks.
+# Student: Max Patel (24IT070) - CHARUSAT - ITUE301
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Service 1: MongoDB Database
+  # ---------------------------------------------------------------------------
+  mongo:
+    image: mongo:7.0
+    container_name: taskmanager-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=taskmanager
+    volumes:
+      # Persistent named volume for MongoDB database files
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - taskmanager-network
+
+  # ---------------------------------------------------------------------------
+  # Service 2: Node.js Express Backend
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: taskmanager-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/taskmanager
+      - JWT_SECRET=${JWT_SECRET:-super_secret_jwt_key_practical11_change_in_production}
+      - CACHE_TTL=60
+    depends_on:
+      mongo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5000/api/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - taskmanager-network
+
+  # ---------------------------------------------------------------------------
+  # Service 3: React Vite Frontend + Nginx Reverse Proxy
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: taskmanager-frontend
+    restart: unless-stopped
+    ports:
+      # Mapped to host port 5173 (standard Vite port) and port 80 (standard HTTP)
+      - "5173:80"
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - taskmanager-network
+
+# -----------------------------------------------------------------------------
+# Persistent Storage Volumes
+# -----------------------------------------------------------------------------
+volumes:
+  mongo_data:
+    name: taskmanager_mongo_data
+
+# -----------------------------------------------------------------------------
+# Isolated Bridge Network
+# -----------------------------------------------------------------------------
+networks:
+  taskmanager-network:
+    name: taskmanager_network
+    driver: bridge

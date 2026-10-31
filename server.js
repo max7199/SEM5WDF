@@ -40,7 +40,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Welcome to Practical 10: Asynchronous Processing with Event-Driven Architecture API',
+    message: 'Welcome to Practical 11: Containerization with Docker and Docker Compose API',
     student: 'Max Patel (24IT070)',
     course: 'Advanced Web Development Frameworks (ITUE301)',
     college: 'CHARUSAT',
@@ -55,27 +55,54 @@ app.get('/', (req, res) => {
       'Cache Hit/Miss Metrics Monitoring (/debug/cache)',
       'Asynchronous Event-Driven Architecture (Node.js EventEmitter)',
       'Background Task-Created Notification Processing (task-created)',
-      'Decoupled setImmediate() Event Loop Execution'
+      'Decoupled setImmediate() Event Loop Execution',
+      'Full-Stack Docker Containerization (Frontend, Backend, MongoDB)',
+      'Docker Compose Multi-Container Orchestration',
+      'Nginx Reverse Proxy & Single-Page Application Fallback',
+      'Persistent Named Volume Storage (taskmanager_mongo_data)',
+      'Isolated Bridge Networking (taskmanager_network)',
+      'Container Health Check & Monitoring (/api/health)'
     ],
     endpoints: {
+      health: {
+        healthCheck: 'GET /health or /api/health'
+      },
       auth: {
-        register: 'POST /register (or /auth/register)',
-        login: 'POST /login (or /auth/login)',
-        me: 'GET /me (or /auth/me) [Protected]'
+        register: 'POST /register (or /api/register, /auth/register)',
+        login: 'POST /login (or /api/login, /auth/login)',
+        me: 'GET /me (or /api/me, /auth/me) [Protected]'
       },
       tasks: {
-        getAllTasks: 'GET /tasks [Protected, Cached]',
-        getSingleTask: 'GET /tasks/:id [Protected, Cached]',
-        createTask: 'POST /tasks [Protected, Emits task-created]',
-        updateTask: 'PUT /tasks/:id [Protected, Invalidates Cache]',
-        deleteTask: 'DELETE /tasks/:id [Protected, Invalidates Cache]'
+        getAllTasks: 'GET /tasks (or /api/tasks) [Protected, Cached]',
+        getSingleTask: 'GET /tasks/:id (or /api/tasks/:id) [Protected, Cached]',
+        createTask: 'POST /tasks (or /api/tasks) [Protected, Emits task-created]',
+        updateTask: 'PUT /tasks/:id (or /api/tasks/:id) [Protected, Invalidates Cache]',
+        deleteTask: 'DELETE /tasks/:id (or /api/tasks/:id) [Protected, Invalidates Cache]'
       },
       debug: {
-        cacheMetrics: 'GET /debug/cache',
-        cacheReset: 'POST /debug/cache/reset',
-        notifications: 'GET /debug/notifications',
-        notificationsReset: 'POST /debug/notifications/reset'
+        cacheMetrics: 'GET /debug/cache (or /api/debug/cache)',
+        cacheReset: 'POST /debug/cache/reset (or /api/debug/cache/reset)',
+        notifications: 'GET /debug/notifications (or /api/debug/notifications)',
+        notificationsReset: 'POST /debug/notifications/reset (or /api/debug/notifications/reset)'
       }
+    }
+  });
+});
+
+// Health check endpoint for Docker container orchestration and monitoring (Practical 11)
+app.get(['/health', '/api/health'], (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const statusMap = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    database: statusMap[dbState] || 'unknown',
+    services: {
+      server: 'online',
+      database: dbState === 1 ? 'healthy' : 'degraded',
+      cache: 'active',
+      events: 'active'
     }
   });
 });
@@ -83,6 +110,7 @@ app.get('/', (req, res) => {
 // Mount Authentication Routes
 app.use('/auth', authRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes);
 app.use('/', authRoutes);
 
 // Mount Task Management Routes
