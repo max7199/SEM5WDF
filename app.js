@@ -16,6 +16,7 @@ import errorHandler from './middleware/errorHandler.js';
 import taskRoutes from './routes/tasks.js';
 import authRoutes from './routes/auth.js';
 import debugRoutes from './routes/debug.js';
+import aiRoutes from './routes/ai.js';
 
 const app = express();
 
@@ -65,11 +66,16 @@ app.get('/', (req, res) => {
       'Persistent Named Volume Storage (taskmanager_mongo_data)',
       'Continuous Integration & Deployment (CI/CD) with GitHub Actions',
       'Automated Jest & Supertest Integration Test Suite',
-      'Container Health Check & Monitoring (/api/health)'
+      'Container Health Check & Monitoring (/api/health)',
+      'Secure Backend OpenAI AI API Integration (Practical 13)',
+      'AI-Powered Task Description Generation with 1-Min Rate Limiting'
     ],
     endpoints: {
       health: {
         healthCheck: 'GET /health or /api/health'
+      },
+      ai: {
+        generateDescription: 'POST /api/ai/generate-description'
       },
       auth: {
         register: 'POST /register (or /api/register, /auth/register)',
@@ -124,6 +130,10 @@ app.use('/api/tasks', taskRoutes);
 // Mount Cache & Notification Debug Routes (Practical 9 & 10)
 app.use('/debug', debugRoutes);
 app.use('/api/debug', debugRoutes);
+
+// Mount AI Description Generator Routes (Practical 13)
+app.use('/ai', aiRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Simulation route for verifying 500 error handler
 app.get('/simulate-error', (req, res, next) => {

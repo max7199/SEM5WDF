@@ -214,6 +214,16 @@ export async function deleteTask(id) {
   });
 }
 
+/**
+ * 10. Practical 13: Generate AI task description using OpenAI backend endpoint
+ */
+export async function generateAiDescription(payload) {
+  return await request('/api/ai/generate-description', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+}
+
 export default {
   getStoredToken,
   setStoredToken,
@@ -230,5 +240,6 @@ export default {
   createTask,
   updateTask,
   deleteTask,
+  generateAiDescription,
   API_BASE_URL
 };

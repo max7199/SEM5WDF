@@ -2691,3 +2691,95 @@
   color: #e2e8f0;
   border-color: #475569;
 }
+
+
+/* =============================================================================
+   Practical 13: AI Task Description Generator Styles
+   ============================================================================= */
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.45rem;
+}
+
+.btn-ai-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4338ca;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.btn-ai-generate:hover:not(:disabled) {
+  background: #e0e7ff;
+  color: #312e81;
+  border-color: #a5b4fc;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-ai-generate:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  filter: grayscale(20%);
+}
+
+.ai-disclaimer-box {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.ai-error-box {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.dark-mode .btn-ai-generate {
+  background: #312e81;
+  color: #e0e7ff;
+  border-color: #4338ca;
+}
+
+.dark-mode .btn-ai-generate:hover:not(:disabled) {
+  background: #3730a3;
+  color: #ffffff;
+}
+
+.dark-mode .ai-disclaimer-box {
+  background: #082f49;
+  border-color: #0369a1;
+  color: #7dd3fc;
+}
+
+.dark-mode .ai-error-box {
+  background: #450a0a;
+  border-color: #991b1b;
+  color: #fca5a5;
+}

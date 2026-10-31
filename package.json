@@ -16,6 +16,7 @@
     "test:p10": "node test-practical10.js",
     "test:p11": "node test-practical11.js",
     "test:p12": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
+    "test:p13": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/ai.test.js --runInBand",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.11.4",
     "node-cache": "^5.1.2",
+    "openai": "^7.47.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.18.1"

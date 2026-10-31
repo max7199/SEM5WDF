@@ -164,6 +164,24 @@
 - Detailed documentation: [docs/PRACTICAL_12.md](docs/PRACTICAL_12.md) and [PRACTICAL_12_README.md](PRACTICAL_12_README.md).
 - 12 authentic screenshots captured in `screenshots/P12/`.
 
+### Practical 13: AI API Integration into a Web Application
+- Secure backend integration of **OpenAI API** (`openai` v7.47.0) utilizing `gpt-4o-mini`.
+- Backend proxy route `POST /api/ai/generate-description` keeping API keys strictly on the server.
+- Frontend task creation integration (`TaskForm.jsx`):
+  - Action button: `"✨ Generate description"`.
+  - In-flight loading feedback: `"Generating..."` with rotating spinner and button disabling.
+  - Contextual suggestion populated directly into description field.
+  - 100% editable suggestions allowing full human-in-the-loop review before persisting.
+  - Transparent AI disclaimer notification: `"🤖 AI-generated suggestion. Please review and edit before saving."`.
+- Resilient error handling and graceful degradation:
+  - Catches missing/invalid keys, provider quota limits, and timeouts.
+  - Returns friendly fallback: `"AI suggestions are temporarily unavailable. Please enter your description manually."`.
+  - Core manual task CRUD operations remain completely operational if AI fails.
+- In-memory rate limiting enforcing maximum 1 AI request per task per minute (HTTP 429).
+- Automated integration test suite (`tests/ai.test.js`) verifying 6 AI scenarios under Jest & Supertest.
+- Detailed documentation: [docs/PRACTICAL_13.md](docs/PRACTICAL_13.md).
+- 17 authentic screenshots captured in `screenshots/P13/`.
+
 ---
 
 ## File Structure
@@ -177,6 +195,7 @@ student-portfolio/
 │   ├── Dockerfile              # Node.js 20 Alpine production backend image
 │   └── .dockerignore           # Excludes local node_modules and .env
 ├── controllers/
+│   ├── aiController.js         # Practical 13: AI description generator controller
 │   ├── authController.js       # Practical 7: Registration, login, & /me controller
 │   └── taskController.js       # Practical 5/7/10: Task CRUD with cache & event emission
 ├── dist/                       # Production build output
@@ -200,6 +219,7 @@ student-portfolio/
 ├── node_modules/               # Dependencies
 ├── public/                     # Static assets
 ├── routes/
+│   ├── ai.js                   # Practical 13: AI description endpoint (/api/ai/generate-description)
 │   ├── auth.js                 # Practical 7: Auth routes (/register, /login, /me)
 │   ├── debug.js                # Practical 9/10: Cache & notification debug routes
 │   └── tasks.js                # Protected task routes (GET, POST, PUT, DELETE)
@@ -212,7 +232,10 @@ student-portfolio/
 │   ├── P9/                     # Practical 9: 10 In-memory caching & benchmark screenshots
 │   ├── P10/                    # Practical 10: 11 Asynchronous event processing screenshots
 │   ├── P11/                    # Practical 11: 14 Docker containerization & orchestration screenshots
-│   └── P12/                    # Practical 12: 12 CI/CD GitHub Actions pipeline screenshots
+│   ├── P12/                    # Practical 12: 12 CI/CD GitHub Actions pipeline screenshots
+│   └── P13/                    # Practical 13: 17 AI API integration screenshots
+├── services/
+│   └── aiService.js            # Practical 13: OpenAI SDK client, rate limiting, and prompt logic
 ├── src/
 │   ├── components/
 │   │   ├── AuthCard.jsx        # Practical 7: Login & Registration form component
@@ -243,11 +266,12 @@ student-portfolio/
 │   ├── index.css               # Global design tokens and resets
 │   └── main.jsx                # BrowserRouter wrapper entry point
 ├── tests/
+│   ├── ai.test.js              # Practical 13: Jest & Supertest AI API integration tests
 │   └── api.test.js             # Practical 12: Jest & Supertest automated API tests
 ├── utils/
 │   └── cache.js                # Practical 9: Shared node-cache module with TTL & invalidation
 ├── .dockerignore               # Practical 11: Root Docker ignore patterns
-├── .env                        # Local database URI, JWT secret, port (gitignored)
+├── .env                        # Local database URI, JWT secret, OpenAI key, port (gitignored)
 ├── .env.example                # Template configuration file with placeholder secret
 ├── .env.docker.example         # Practical 11: Docker Compose environment template
 ├── Dockerfile.backend          # Practical 11: Production Node.js 20 backend containerfile
@@ -257,7 +281,7 @@ student-portfolio/
 ├── app.js                      # Practical 12: Express app configuration separated for testing
 ├── server.js                   # Express + MongoDB + JWT Auth + Caching + Event listeners + Health
 ├── index.html                  # HTML host document
-├── package.json                # Dependencies and scripts (added test & test:p12)
+├── package.json                # Dependencies and scripts (added test, test:p12, test:p13)
 ├── vite.config.js              # Vite configuration
 ├── .gitignore                  # Excludes node_modules, dist, .env, and logs
 ├── docs/
@@ -265,7 +289,8 @@ student-portfolio/
 │   ├── PRACTICAL_9.md          # Practical 9: In-Memory Caching in-depth documentation
 │   ├── PRACTICAL_10.md         # Practical 10: Asynchronous Event-Driven Architecture documentation
 │   ├── PRACTICAL_11.md         # Practical 11: Containerization with Docker & Docker Compose docs
-│   └── PRACTICAL_12.md         # Practical 12: CI/CD Pipeline with GitHub Actions documentation
+│   ├── PRACTICAL_12.md         # Practical 12: CI/CD Pipeline with GitHub Actions documentation
+│   └── PRACTICAL_13.md         # Practical 13: AI API Integration in-depth documentation
 ├── PRACTICAL_1_README.md       # Practical 1 Viva & Documentation
 ├── PRACTICAL_2_README.md       # Practical 2 Viva & Documentation
 ├── PRACTICAL_3_README.md       # Practical 3 Viva & Documentation
@@ -358,8 +383,11 @@ npm run test:p10
 # Run Practical 11 Docker Specification & Containerization test suite
 npm run test:p11
 
-# Run Practical 12 Jest & Supertest Integration test suite (CI Pipeline)
+# Run Practical 12 & 13 Jest & Supertest Integration test suite (CI Pipeline)
 npm test
 # or
 npm run test:p12
+
+# Run Practical 13 AI API Integration test suite
+npm run test:p13
 ```
