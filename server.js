@@ -9,6 +9,7 @@ import checkContentType from './middleware/checkContentType.js';
 import errorHandler from './middleware/errorHandler.js';
 import taskRoutes from './routes/tasks.js';
 import authRoutes from './routes/auth.js';
+import debugRoutes from './routes/debug.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -38,7 +39,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Welcome to Practical 7: Authentication & Middleware Pipeline API',
+    message: 'Welcome to Practical 9: In-Memory Caching and Query Optimization API',
     student: 'Max Patel (24IT070)',
     course: 'Advanced Web Development Frameworks (ITUE301)',
     college: 'CHARUSAT',
@@ -47,7 +48,10 @@ app.get('/', (req, res) => {
       'JWT Authentication & Verification',
       'Bcrypt Password Hashing',
       'Protected Task Routes with User Isolation',
-      'Server-Side Input Validation Pipeline'
+      'Server-Side Input Validation Pipeline',
+      'In-Memory Caching (node-cache) with 60s TTL',
+      'Automatic Cache Invalidation on Writes (POST, PUT, DELETE)',
+      'Cache Hit/Miss Metrics Monitoring (/debug/cache)'
     ],
     endpoints: {
       auth: {
@@ -56,11 +60,15 @@ app.get('/', (req, res) => {
         me: 'GET /me (or /auth/me) [Protected]'
       },
       tasks: {
-        getAllTasks: 'GET /tasks [Protected]',
-        getSingleTask: 'GET /tasks/:id [Protected]',
-        createTask: 'POST /tasks [Protected]',
-        updateTask: 'PUT /tasks/:id [Protected]',
-        deleteTask: 'DELETE /tasks/:id [Protected]'
+        getAllTasks: 'GET /tasks [Protected, Cached]',
+        getSingleTask: 'GET /tasks/:id [Protected, Cached]',
+        createTask: 'POST /tasks [Protected, Invalidates Cache]',
+        updateTask: 'PUT /tasks/:id [Protected, Invalidates Cache]',
+        deleteTask: 'DELETE /tasks/:id [Protected, Invalidates Cache]'
+      },
+      debug: {
+        cacheMetrics: 'GET /debug/cache',
+        cacheReset: 'POST /debug/cache/reset'
       }
     }
   });
@@ -74,6 +82,10 @@ app.use('/', authRoutes);
 // Mount Task Management Routes
 app.use('/tasks', taskRoutes);
 app.use('/api/tasks', taskRoutes);
+
+// Mount Cache Debug Routes (Practical 9)
+app.use('/debug', debugRoutes);
+app.use('/api/debug', debugRoutes);
 
 // Simulation route for verifying 500 error handler
 app.get('/simulate-error', (req, res, next) => {

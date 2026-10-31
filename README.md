@@ -110,6 +110,19 @@
 - Detailed documentation: [docs/PRACTICAL_8.md](docs/PRACTICAL_8.md) and [PRACTICAL_8_README.md](PRACTICAL_8_README.md).
 - 12 authentic screenshots captured in `screenshots/P8/`.
 
+### Practical 9: In-Memory Caching and Query Optimization
+- In-memory key-value caching layer using **`node-cache`** (60s default TTL, 120s checkperiod) for `GET /tasks` and `GET /tasks/:id`.
+- Strict **multi-tenant user isolation**: cache keys scoped exclusively to the authenticated user's ID (`tasks:user:<userId>` and `task:user:<userId>:<taskId>`), completely eliminating cross-tenant data leakage.
+- Automatic **post-write cache invalidation**: every successful `POST /tasks`, `PUT /tasks/:id`, and `DELETE /tasks/:id` immediately invalidates the user's task-list and single-task cache to guarantee strong read-after-write consistency.
+- Cache monitoring and debug endpoint: **`GET /debug/cache`** exposes real-time hit/miss counters, hit ratio percentage, and active key count without leaking private data; **`POST /debug/cache/reset`** provides a clean test reset mechanism.
+- Performance Benchmark:
+  - Uncached MongoDB queries: **3.05 ms** average (`X-Cache: MISS`).
+  - In-memory cached queries: **1.39 ms** average (`X-Cache: HIT`).
+  - Measured speedup: **2.19x faster throughput** (54.4% latency reduction).
+- Automated test suite (`test-practical9.js` / `npm run test:p9`) verifying all 13 caching, invalidation, user isolation, and benchmark scenarios (100% green).
+- Detailed documentation: [docs/PRACTICAL_9.md](docs/PRACTICAL_9.md) and [PRACTICAL_9_README.md](PRACTICAL_9_README.md).
+- 10 authentic screenshots captured in `screenshots/P9/`.
+
 ---
 
 ## File Structure
@@ -134,13 +147,15 @@ student-portfolio/
 ├── public/                     # Static assets
 ├── routes/
 │   ├── auth.js                 # Practical 7: Auth routes (/register, /login, /me)
+│   ├── debug.js                # Practical 9: Cache monitoring routes (/debug/cache)
 │   └── tasks.js                # Protected task routes (GET, POST, PUT, DELETE)
 ├── screenshots/
 │   ├── Practical 4/            # REST API screenshots
 │   ├── Practical 5/            # MongoDB screenshots
 │   ├── Practical 6/            # 12 Full-stack integration screenshots
 │   ├── P7/                     # Practical 7: 12 Authentication & middleware screenshots
-│   └── P8/                     # Practical 8: 12 Performance & code splitting screenshots
+│   ├── P8/                     # Practical 8: 12 Performance & code splitting screenshots
+│   └── P9/                     # Practical 9: 10 In-memory caching & benchmark screenshots
 ├── src/
 │   ├── components/
 │   │   ├── AuthCard.jsx        # Practical 7: Login & Registration form component
@@ -170,18 +185,22 @@ student-portfolio/
 │   ├── App.css                 # Component styling, layouts, cards, and dark mode
 │   ├── index.css               # Global design tokens and resets
 │   └── main.jsx                # BrowserRouter wrapper entry point
+├── utils/
+│   └── cache.js                # Practical 9: Shared node-cache module with TTL & invalidation
 ├── .env                        # Local database URI, JWT secret, port (gitignored)
 ├── .env.example                # Template configuration file with placeholder secret
 ├── test-api.js                 # Practical 4: In-memory automated test suite
 ├── test-practical5.js          # Practical 5: MongoDB automated test suite
 ├── test-practical7.js          # Practical 7: Auth & middleware automated test suite
-├── server.js                   # Express + MongoDB + JWT Auth + CORS server
+├── test-practical9.js          # Practical 9: In-memory caching & benchmark test suite
+├── server.js                   # Express + MongoDB + JWT Auth + Caching server
 ├── index.html                  # HTML host document
-├── package.json                # Dependencies and scripts (added test:p7)
+├── package.json                # Dependencies and scripts (added test:p9)
 ├── vite.config.js              # Vite configuration
 ├── .gitignore                  # Excludes node_modules, dist, .env, and logs
 ├── docs/
-│   └── PRACTICAL_8.md          # Practical 8: Performance & Lazy Loading in-depth documentation
+│   ├── PRACTICAL_8.md          # Practical 8: Performance & Lazy Loading in-depth documentation
+│   └── PRACTICAL_9.md          # Practical 9: In-Memory Caching in-depth documentation
 ├── PRACTICAL_1_README.md       # Practical 1 Viva & Documentation
 ├── PRACTICAL_2_README.md       # Practical 2 Viva & Documentation
 ├── PRACTICAL_3_README.md       # Practical 3 Viva & Documentation
@@ -190,6 +209,7 @@ student-portfolio/
 ├── PRACTICAL_6_README.md       # Practical 6 Full-Stack Integration Viva & Docs
 ├── PRACTICAL_7_README.md       # Practical 7 Authentication & Middleware Viva & Docs
 ├── PRACTICAL_8_README.md       # Practical 8 Performance Optimization Viva & Docs
+├── PRACTICAL_9_README.md       # Practical 9 In-Memory Caching Viva & Docs
 └── README.md                   # Project overview
 ```
 
@@ -236,4 +256,7 @@ npm run test:p5
 
 # Run Practical 7 Authentication & Middleware Pipeline test suite
 npm run test:p7
+
+# Run Practical 9 In-Memory Caching & Benchmark test suite
+npm run test:p9
 ```

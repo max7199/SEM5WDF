@@ -11,7 +11,8 @@
     "server": "node server.js",
     "test:api": "node test-api.js",
     "test:p5": "node test-practical5.js",
-    "test:p7": "node test-practical7.js"
+    "test:p7": "node test-practical7.js",
+    "test:p9": "node test-practical9.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -20,6 +21,7 @@
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.11.4",
+    "node-cache": "^5.1.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.18.1"
